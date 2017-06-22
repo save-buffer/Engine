@@ -7,13 +7,12 @@ using System.Drawing;
 
 namespace Engine
 {
-    class ParticleSystem : Element, Drawable
+    class ParticleSystem : Element, Drawable, Updatable
     {
         private class Particle
         {
             public PointF Position;
-            public int FramesLeft;
-            public int TotalLifetime;
+            public float SecondsLeft;
         }
         public int ZOrder
         {
@@ -22,28 +21,41 @@ namespace Engine
         }
         public Color c;
         public int Radius;
-        public int ParticleDuration;
+        public float ParticleDuration;
         public int ParticleSize;
         private static Random r = new Random();
         private List<Particle> Particles;
-        public int Intensity;
-        public ParticleSystem(string Name, Color c, int Radius, int Intensity, int ParticleDuration) : base(Name)
+        public int NumberOfParticles;
+        public ParticleSystem(string Name, Color c, int Radius, int NumberOfParticles, float ParticleDuration) : base(Name)
         {
             this.c = c;
             this.Radius = Radius;
-            this.Particles = new List<Particle>(Intensity);
-            this.Intensity = Intensity;
+            this.Particles = new List<Particle>(NumberOfParticles);
+            this.NumberOfParticles = NumberOfParticles;
             this.Visible = true;
-            this.ParticleDuration = ParticleDuration * (int)Game.FrameRate;
+            this.ParticleDuration = ParticleDuration;
             this.Position = new PointF(0, 0);
             this.ParticleSize = 3;
+
+            var add_drawable = typeof(Game).GetMethod("AddDrawable", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic);
+            add_drawable.Invoke(null, new object[] { this });
         }
-        public void Draw(Graphics g)
+
+        public override void Update(float dt)
         {
-            int ToGen = r.Next(0, Intensity);
+            base.Update(dt);
+            int ToGen = r.Next(0, NumberOfParticles);
+
+            for(int i = 0; i < Particles.Count; i++)
+            {
+                Particles[i].SecondsLeft -= dt;
+                if (Particles[i].SecondsLeft <= 0)
+                    Particles.RemoveAt(i--);
+            }
+
             for (int i = 0; i < ToGen; i++)
             {
-                if (Particles.Count <= Intensity && r.Next(0, 101) <= 1)
+                if (Particles.Count <= NumberOfParticles && r.Next(0, 101) <= 1)
                 {
                     Particle p = new Particle();
                     p.Position = new PointF(this.Position.X, this.Position.Y);
@@ -51,10 +63,14 @@ namespace Engine
                     float Angle = (float)(r.NextDouble() * 2 * Math.PI);
                     p.Position.X += Distance * (float)Math.Cos(Angle);
                     p.Position.Y += Distance * (float)Math.Sin(Angle);
-                    p.FramesLeft = p.TotalLifetime = ParticleDuration;
+                    p.SecondsLeft = ParticleDuration;
                     Particles.Add(p);
                 }
             }
+        }
+
+        public void Draw(Graphics g)
+        {
             for(int i = 0; i < Particles.Count; i++)
             {
                 Particle p = Particles[i];
@@ -62,14 +78,17 @@ namespace Engine
                 PointF ScreenPosition = Game.GameToScreenCoordinates(Position, 0, 0);
 
                 Brush b = new SolidBrush(
-                    Color.FromArgb((int)(255 * (float)p.FramesLeft / (float)p.TotalLifetime),
+                    Color.FromArgb((int)(255 * p.SecondsLeft / ParticleDuration),
                     c));
                 g.FillEllipse(b, ScreenPosition.X, ScreenPosition.Y, ParticleSize, ParticleSize);
-                p.FramesLeft -= 1;
-
-                if(p.FramesLeft == 0)
-                    Particles.RemoveAt(i--);
             }
+        }
+
+        public new void Kill()
+        {
+            base.Kill();
+            var remove_drawable = typeof(Game).GetMethod("RemoveDrawable", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic);
+            remove_drawable.Invoke(null, new object[] { this });
         }
     }
 }

@@ -8,7 +8,7 @@ using System.Reflection;
 
 namespace Engine
 {
-    public class Element : Updatable
+    public class Element
     {
         public Engine.PointF Position;
         private List<Updatable> Belongings;

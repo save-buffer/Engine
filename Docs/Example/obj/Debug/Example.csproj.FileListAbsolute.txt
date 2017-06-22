@@ -1,0 +1,10 @@
+C:\Users\Sasha\Source\Repos\Engine\Docs\Example\bin\Debug\Example.exe.config
+C:\Users\Sasha\Source\Repos\Engine\Docs\Example\bin\Debug\Example.exe
+C:\Users\Sasha\Source\Repos\Engine\Docs\Example\bin\Debug\Example.pdb
+C:\Users\Sasha\Source\Repos\Engine\Docs\Example\bin\Debug\Engine.dll
+C:\Users\Sasha\Source\Repos\Engine\Docs\Example\bin\Debug\MathNet.Numerics.dll
+C:\Users\Sasha\Source\Repos\Engine\Docs\Example\obj\Debug\Example.csprojResolveAssemblyReference.cache
+C:\Users\Sasha\Source\Repos\Engine\Docs\Example\obj\Debug\Example.Properties.Resources.resources
+C:\Users\Sasha\Source\Repos\Engine\Docs\Example\obj\Debug\Example.csproj.GenerateResource.Cache
+C:\Users\Sasha\Source\Repos\Engine\Docs\Example\obj\Debug\Example.exe
+C:\Users\Sasha\Source\Repos\Engine\Docs\Example\obj\Debug\Example.pdb

@@ -18,6 +18,30 @@ namespace Engine
         public static Size Dimensions;
         public static int FrameRate; //The framerate
 
+        private static bool full_screen = false;
+        public static bool FullScreen
+        {
+            get
+            {
+                return full_screen;
+            }
+            set
+            {
+                full_screen = value;
+                if (value)
+                {
+                    game.FormBorderStyle = FormBorderStyle.None;
+                    game.WindowState = FormWindowState.Maximized;
+                }
+                else
+                {
+                    game.FormBorderStyle = FormBorderStyle.Sizable;
+                    game.WindowState = FormWindowState.Normal;
+                }
+                Dimensions = new Size(game.Width, game.Height);
+            }
+        }
+
         public static PointF GameToScreenCoordinates(PointF Position, int Width, int Height)
         {
             return new PointF((Position.X + Dimensions.Width / 2f) - Width / 2f,
@@ -44,10 +68,11 @@ namespace Engine
                 game.CurrentState.Initialize();
             }
         }
-        public static void Initialize(State InitialState, string Name, int Width, int Height, int Framerate = 0)
+        public static void Initialize(State InitialState, string Name, int Width, int Height, int Framerate = 0, bool Fullscreen = false)
         {
             FrameRate = Framerate;
             game = new game_obj((uint)Width, (uint)Height, Name, (uint)Framerate);
+            Game.FullScreen = Fullscreen;
             XboxControllers = new XboxController[4];
             for (int i = 0; i < 4; i++)
                 XboxControllers[i] = new XboxController(i);
@@ -161,10 +186,10 @@ namespace Engine
 
                 this.KeyDown += new KeyEventHandler(Game_KeyDown); //Keyboard Input Handler setup
                 this.KeyUp += new KeyEventHandler(Game_KeyUp);
-
-                Dimensions = new PointF(Width, Height); //Sets the dimensions of the game
-                FormBorderStyle = FormBorderStyle.None;
-WindowState = FormWindowState.Maximized;
+                this.Resize += (object sender, EventArgs e) =>
+                {
+                    Game.Dimensions = new Size(this.Width, this.Height);
+                };
 
                 watch = new Stopwatch();
                 watch.Start();
@@ -174,6 +199,7 @@ WindowState = FormWindowState.Maximized;
                     running = false;
                 };
             }
+
             void Game_Paint(object sender, PaintEventArgs e)
             {
                 if (CurrentState != null && CurrentState.Elements != null)

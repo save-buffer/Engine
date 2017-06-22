@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Drawing;
+using System.Collections.Generic;
 
 namespace Engine
 {
@@ -19,7 +16,7 @@ namespace Engine
             get;
             set;
         }
-        public Color c;
+        public System.Drawing.Color c;
         public int Radius;
         public float ParticleDuration;
         public int ParticleSize;

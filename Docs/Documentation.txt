@@ -1,0 +1,66 @@
+Thank you for using my game engine! :)
+
+If you have any questions regarding the engine and it's not covered in the documentation, submit an issue on the github (github.com/save-buffer/Engine) and I will update the documentation. 
+
+Now, let's get started!
+
+====== Adding the Engine ======
+
+In Visual Studio, create a new Windows Forms Application. In the same directory as the solution (.sln) file, put the two .dll files you downloaded. One should be called Engine.dll and the other should be MathNet.Numerics.dll.
+
+Next, inside the Solution Explorer in Visual Studio, right click the dropdown that says "References" and click "Add Refrence". Go to Browse and add the two dlls to it. You should be all set to go!
+
+====== Opening a window ======
+
+using Engine;
+
+namespace Example
+{
+	static class Program
+	{
+		[STAThread]
+		static void Main()
+		{
+			Engine.Game.Initialize(new Level(), "Game", 1366, 768, 60);
+		}
+	}
+}
+
+This is all you have to do to open a window. In this case, the window will be titled "Game", it will be 1366 pixels wide, 768 pixels tall, and will update 60 times per second. You'll notice it doesn't compile yet. I'll explain why in the next part. 
+
+
+====== States ======
+
+A game consists of two things: A world and objects that interact with the world and each other. 
+The State is the world. Inside the State, you can create new objects, enforce how they interact with each other, etc. 
+
+The base class "State" is abstract; you can't just make one. Instead, you have to inherit from it and make your own!
+Let's make our own State called Level:
+
+namespace Example
+{
+	class Level : State
+	{
+		public override void Initialize() { base.Initialize(); /* Do stuff */ }
+		public override void Update(float dt) { base.Update(); /* Do stuff */ }
+	}	
+}
+
+The two methods you see in the class are pretty self-explanatory: Initialize runs once the Level is loaded into the game. Update will run once every frame. It's important to note that you should NOT override the constructor to State. Override Initialize() instead. 
+
+====== Elements ======
+
+Elements are the objects that are in the world. While they do nothing by themselves, they provide a mechanism for you to create your own. Let's create our own Element called Player.
+
+using Engine;
+
+namespace Example
+{
+	class Player : Element
+	{
+		public Player() : base("Player") { /* Do stuff */ }
+		public override void Update(float dt) { /* Do stuff */ }
+	}
+}
+
+The base constructor for Element requires that you give it a name. Since we are only going to add one player, we can just pass Player to the base constructor. 
